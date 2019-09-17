@@ -1,0 +1,156 @@
+struct DirectionalLight {
+    vec3 direction;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+struct PointLight {
+    vec3 position;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+    float constant;
+    float linear;
+    float quadratic;
+};
+
+struct SpotLight {
+    vec3 position;
+    vec3 direction;
+    float cutOffAngle;
+    float outerCutOffAngle;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+    float constant;
+    float linear;
+    float quadratic;
+};
+
+struct Phong {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+const int LAMBERTIAN = 0;
+const int HALF_LAMBERT = 1;
+const int CEL_SHADING = 2;
+
+float DEG_TO_RAD = 0.017453292519943295;
+
+float applyLightEffectOnDiffuse(float diff, int effect) {
+    if (effect == HALF_LAMBERT) {
+        diff = diff * 0.5 + 0.5;
+    } else if (effect == CEL_SHADING) {
+        //        diff = diff * 0.5 + 0.5;
+        //        diff = smoothstep(0.35, 0.37, diff) * 0.4 + smoothstep(0.70, 0.72, diff) * 0.6;
+    }
+    return max(diff, 0.0);
+}
+
+float applyLightEffectOnSpecular(float spec, int effect) {
+    if (effect == HALF_LAMBERT) {
+        //        spec = spec * 0.5 + 0.5;
+    } else if (effect == CEL_SHADING) {
+        //        diff = diff * 0.5 + 0.5;
+        spec = smoothstep(0.70, 0.72, spec);
+    }
+    return max(spec, 0.0);
+}
+
+float getAttenuation(vec3 lightPosition, vec3 fragPosition, float constant, float linear, float quadratic) {
+    float distance = length(lightPosition - fragPosition);
+    return constant + linear * distance + quadratic * distance * distance;
+}
+
+float styleD(float diff, int effect) {
+    if (effect == HALF_LAMBERT || effect == CEL_SHADING) {
+        diff = diff * 0.5 + 0.5;
+    }
+    if (effect == CEL_SHADING) {
+        diff = smoothstep(0.35, 0.36, diff) * 0.4 + smoothstep(0.7, 0.71, diff) * 0.6;
+    }
+    return max(diff, 0);
+}
+
+float styleS(float spec, int effect) {
+    if (effect == CEL_SHADING) {
+        spec = smoothstep(0.35, 0.36, spec) * 0.4 + smoothstep(0.7, 0.71, spec) * 0.6;
+    }
+    return max(spec, 0);
+}
+
+Phong calcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir, float shininess, int effect) {
+
+    vec3 lightDir = normalize(-light.direction);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float diff = dot(normal, lightDir);
+    float spec = shininess > 0.0 ? pow(dot(viewDir, reflectDir), shininess) : 0.0;
+
+    diff = styleD(diff, effect);
+    spec = styleS(spec, effect);
+
+    Phong result;
+    result.ambient = light.ambient;
+    result.diffuse = light.diffuse * diff;
+    result.specular = light.specular * spec;
+
+    return result;
+
+}
+
+Phong calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, float shininess, int effect) {
+
+    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float diff = dot(normal, lightDir);
+    float spec = shininess > 0.0 ? pow(dot(viewDir, reflectDir), shininess) : 0.0;
+
+    diff = styleD(diff, effect);
+    spec = styleS(spec, effect);
+
+    float attenuation = getAttenuation(light.position, fragPos, light.constant, light.linear, light.quadratic);
+
+    Phong result;
+    result.ambient = light.ambient / attenuation;
+    result.diffuse = light.diffuse * diff / attenuation;
+    result.specular = light.specular * spec / attenuation;
+
+    return result;
+
+}
+
+Phong calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, float shininess, int effect) {
+
+    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float diff = dot(normal, lightDir);
+    float spec = shininess > 0.0 ? pow(dot(viewDir, reflectDir), shininess) : 0.0;
+
+    diff = styleD(diff, effect);
+    spec = styleS(spec, effect);
+
+    // spotlight intensity
+    float lightCutOff = cos(light.cutOffAngle * DEG_TO_RAD);
+    float lightOuterCutOff = cos(light.outerCutOffAngle * DEG_TO_RAD);
+    float theta = dot(lightDir, normalize(-light.direction));
+    float epsilon = lightCutOff - lightOuterCutOff;
+    float intensity = clamp((theta - lightOuterCutOff) / epsilon, 0.0, 1.0);
+
+    float attenuation = getAttenuation(light.position, fragPos, light.constant, light.linear, light.quadratic);
+
+    Phong result;
+    result.ambient = light.ambient * intensity / attenuation;
+    result.diffuse = light.diffuse * diff * intensity / attenuation;
+    result.specular = light.specular * spec * intensity / attenuation;
+
+    return result;
+
+}

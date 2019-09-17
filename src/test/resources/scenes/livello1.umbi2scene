@@ -1,0 +1,74 @@
+{
+  "entities": {
+    "lampione.umbi2model": [
+      {
+        "position": [-4, 0, -10],
+        "rotation": [0, 90, 0]
+      },
+      {
+        "position": [4, 0, -10],
+        "rotation": [0, -90, 0]
+      },
+      {
+        "position": [-4, 0, -20],
+        "rotation": [0, 90, 0]
+      },
+      {
+        "position": [4, 0, -20],
+        "rotation": [0, -90, 0]
+      },
+      {
+        "position": [-4, 0, -30],
+        "rotation": [0, 90, 0]
+      },
+      {
+        "position": [4, 0, -30],
+        "rotation": [0, -90, 0]
+      }
+    ],
+    "plane.umbi2model": [
+      {
+        "position": [0, 0.01, 0],
+        "scale": [100, 1, 100]
+      }
+    ],
+    "prima_casa.umbi2model": [
+      {
+        "position": [0, 0, -40],
+        "rotation": [0, 0, 0]
+      }
+    ],
+    "steve.umbi2model": [
+      {
+        "position": [0, 0, -10],
+        "rotation": [0, 0, 0]
+      }
+    ]
+  },
+  "lights": [
+    {
+      "type": "directional",
+      "direction": [0, -1, 0],
+      "ambient": [0.4, 0.4, 0.4],
+      "diffuse": [0.6, 0.6, 0.6],
+      "specular": [1, 1, 1]
+    },
+    {
+      "type": "spot",
+      "position": [0, 1, 0],
+      "direction": [0, 0, -1],
+      "cutOffAngle": 22.5,
+      "outerCutOffAngle": 45,
+      "ambient": [0.1, 0.1, 0.1],
+      "diffuse": [0, 0, 0],
+      "specular": [0, 1, 0],
+      "constantAttenuation": 1,
+      "linearAttenuation": 0.007,
+      "quadraticAttenuation": 0.0002
+    }
+  ],
+  "entryPoint": {
+    "position": [0, 1.5, -9],
+    "rotation": [0, 0]
+  }
+}

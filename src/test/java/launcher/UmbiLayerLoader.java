@@ -63,7 +63,7 @@ public class UmbiLayerLoader implements Layer {
 						PointLight lig = (PointLight) light;
 						lights.add(
 								new PointLight(
-										lig.getPosition()
+										new Vector3f(lig.getPosition())
 												.rotateY((float) Math.toRadians(rotation.y))
 												.rotateX((float) Math.toRadians(rotation.x))
 												.rotateZ((float) Math.toRadians(rotation.z))
@@ -81,7 +81,7 @@ public class UmbiLayerLoader implements Layer {
 						SpotLight lig = (SpotLight) light;
 						lights.add(
 								new SpotLight(
-										lig.getPosition()
+										new Vector3f(lig.getPosition())
 												.rotateY((float) Math.toRadians(rotation.y))
 												.rotateX((float) Math.toRadians(rotation.x))
 												.rotateZ((float) Math.toRadians(rotation.z))
@@ -143,16 +143,6 @@ public class UmbiLayerLoader implements Layer {
 		float front = posControls.getUp();
 		float right = posControls.getRight();
 		if (front != 0 || right != 0) {
-
-/*
-			// Normalizing
-			float invLength = (float) (1.0 / Math.sqrt(frontAmount * frontAmount + rightAmount * rightAmount));
-			frontAmount *= invLength;
-			rightAmount *= invLength;
-
-			frontAmount *= speed;
-			rightAmount *= speed;
-*/
 			camera.move(front, right);
 		}
 		heightControls.update(ts);

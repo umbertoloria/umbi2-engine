@@ -11,12 +11,16 @@ public class Geometry {
 	private float[] vertices;
 	private int[] indices;
 	private boolean hasTexCoords, hasNormals;
+	private int vertexSize;
 
 	public Geometry(float[] vertices, int[] indices, boolean hasTexCoords, boolean hasNormals) {
 		this.vertices = vertices;
 		this.indices = indices;
 		this.hasTexCoords = hasTexCoords;
 		this.hasNormals = hasNormals;
+		vertexSize = 3;
+		if (hasTexCoords) vertexSize += 2;
+		if (hasNormals) vertexSize += 3;
 	}
 
 	private Map<Integer, float[]> verticesCache = new HashMap<>();
@@ -33,19 +37,28 @@ public class Geometry {
 			if ((code & TCOORDS) != 0) size += 2;
 			if ((code & NORMALS) != 0) size += 3;
 			int j = 0;
-			float[] result = new float[vertices.length / 8 * size];
-			for (int i = 0; i < vertices.length; i += 8) {
+			float[] result = new float[vertices.length / vertexSize * size];
+			for (int i = 0; i < vertices.length; i += vertexSize) {
 				result[j++] = vertices[i];
 				result[j++] = vertices[i + 1];
 				result[j++] = vertices[i + 2];
 				if (texCoords) {
+					if (!hasTexCoords) throw new RuntimeException("Non esistono dati da prelevare");
 					result[j++] = vertices[i + 3];
 					result[j++] = vertices[i + 4];
 				}
 				if (normals) {
-					result[j++] = vertices[i + 5];
-					result[j++] = vertices[i + 6];
-					result[j++] = vertices[i + 7];
+					if (!hasNormals) {
+						throw new RuntimeException("Non esistono dati da prelevare");
+					} else if (!hasTexCoords) {
+						result[j++] = vertices[i + 3];
+						result[j++] = vertices[i + 4];
+						result[j++] = vertices[i + 5];
+					} else {
+						result[j++] = vertices[i + 5];
+						result[j++] = vertices[i + 6];
+						result[j++] = vertices[i + 7];
+					}
 				}
 			}
 

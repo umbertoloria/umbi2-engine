@@ -5,12 +5,8 @@ import engine.Shader;
 import engine.Window;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import render.cool_materials.ColouredMaterial;
-import render.cool_materials.MaterialMaterial;
-import render.cool_materials.TexturedMaterial;
-import render.cool_shaders.ColouredShader;
-import render.cool_shaders.MaterialShader;
-import render.cool_shaders.TextureShader;
+import render.cool_materials.*;
+import render.cool_shaders.*;
 import render.light.DirectionalLight;
 import render.light.Light;
 import render.light.PointLight;
@@ -35,10 +31,11 @@ public class Renderer {
 
 		Matrix4f projectionMatrix = scene.getProjectionMatrix(window.getAspectRatio());
 		Matrix4f viewMatrix = scene.getViewMatrix();
-		Vector3f viewPosition = scene.getViewPosition();
 		Matrix4f projectionViewMatrix = new Matrix4f();
 		projectionViewMatrix = projectionViewMatrix.mul(projectionMatrix, projectionViewMatrix);
 		projectionViewMatrix = projectionViewMatrix.mul(viewMatrix, projectionViewMatrix);
+
+		Vector3f viewPosition = scene.getViewPosition();
 
 		List<Light> lights = scene.getLights();
 		for (Shader shader : scene.shaderOrder()) {
@@ -86,24 +83,61 @@ public class Renderer {
 			for (Batch batch : scene.getBatches(shader)) {
 				Mesh mesh = batch.mesh;
 				Material<?> material = batch.material;
-				Matrix4f transformation = batch.transformation;
+				Matrix4f transformationMatrix = batch.transformation;
 				if (shader instanceof MaterialShader && material instanceof MaterialMaterial) {
 					MaterialShader sha = (MaterialShader) shader;
-					sha.setTransformation(transformation);
+					sha.setTransformation(transformationMatrix);
 					((MaterialMaterial) material).bind(sha);
 				} else if (shader instanceof ColouredShader && material instanceof ColouredMaterial) {
 					ColouredShader sha = (ColouredShader) shader;
-					sha.setTransformation(transformation);
+					sha.setTransformation(transformationMatrix);
 					((ColouredMaterial) material).bind(sha);
 				} else if (shader instanceof TextureShader && material instanceof TexturedMaterial) {
 					TextureShader sha = (TextureShader) shader;
-					sha.setTransformation(transformation);
+					sha.setTransformation(transformationMatrix);
 					((TexturedMaterial) material).bind(sha);
 				}
 				mesh.draw();
 				material.unbind();
 			}
 		}
+	}
+
+	// TODO: Evitrare la scocciatura di aggiornare queste liste ogni volta che si aggiunge un nuovo shader
+	public static void render(Scene2D scene) {
+
+		Matrix4f projectionMatrix = scene.getProjectionMatrix(window.getAspectRatio());
+		Matrix4f viewMatrix = scene.getViewMatrix();
+		Matrix4f projectionViewMatrix = new Matrix4f();
+		projectionViewMatrix = projectionViewMatrix.mul(projectionMatrix, projectionViewMatrix);
+		projectionViewMatrix = projectionViewMatrix.mul(viewMatrix, projectionViewMatrix);
+
+		for (Shader shader : scene.shaderOrder()) {
+			shader.enable();
+//			if (shader instanceof UIShader) {
+//				UIShader ushader = (UIShader) shader;
+//			}
+			for (Batch batch : scene.getBatches(shader)) {
+				Mesh mesh = batch.mesh;
+				Material<?> material = batch.material;
+				Matrix4f transformationMatrix = batch.transformation;
+
+				if (shader instanceof UIShader && material instanceof UIMaterial) {
+					UIShader sha = (UIShader) shader;
+					Matrix4f mvpMatrix = new Matrix4f(projectionViewMatrix).mul(transformationMatrix);
+					sha.setProjectionViewTransformation(mvpMatrix);
+					((UIMaterial) material).bind(sha);
+				} else if (shader instanceof FontShader && material instanceof FontMaterial) {
+					FontShader sha = (FontShader) shader;
+					sha.setProjectionView(projectionViewMatrix);
+					sha.setTransformation(transformationMatrix);
+					((FontMaterial) material).bind(sha);
+				}
+				mesh.draw();
+				material.unbind();
+			}
+		}
+
 	}
 
 }

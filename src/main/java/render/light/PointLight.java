@@ -2,6 +2,8 @@ package render.light;
 
 import org.joml.Vector3f;
 
+import java.util.StringJoiner;
+
 public class PointLight implements Light {
 
 	private Vector3f position;
@@ -47,6 +49,15 @@ public class PointLight implements Light {
 
 	public Vector3f getSpecular() {
 		return specular;
+	}
+
+	public String toString() {
+		return new StringJoiner(", ", PointLight.class.getSimpleName() + "[", "]")
+				.add("position=" + position)
+				.add("ambient=" + ambient)
+				.add("diffuse=" + diffuse)
+				.add("specular=" + specular)
+				.toString();
 	}
 
 }

@@ -1,6 +1,6 @@
 package engine.event;
 
-public class Event<T extends Event.EventType> {
+public class Event {
 
 	public enum EventType {
 		WindowClosed, WindowResized,

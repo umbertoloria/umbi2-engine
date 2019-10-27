@@ -2,6 +2,8 @@ package render.light;
 
 import org.joml.Vector3f;
 
+import java.util.StringJoiner;
+
 public class SpotLight implements Light {
 
 	private Vector3f position, direction;
@@ -70,6 +72,15 @@ public class SpotLight implements Light {
 
 	public float getQuadraticAttenuation() {
 		return quadratic;
+	}
+
+	public String toString() {
+		return new StringJoiner(", ", SpotLight.class.getSimpleName() + "[", "]")
+				.add("position=" + position.x + ", " + position.y + ", " + position.z)
+				.add("ambient=" + ambient)
+				.add("diffuse=" + diffuse)
+				.add("specular=" + specular)
+				.toString();
 	}
 
 }

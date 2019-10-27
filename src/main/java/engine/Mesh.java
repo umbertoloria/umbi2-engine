@@ -95,6 +95,7 @@ public class Mesh {
 		private int offset = -1;
 		final int baseType;
 
+		// TODO: Fare a meno di questo "name" e passare direttamente Shader.Type a Layer (non Element).
 		public Element(String name, Shader.Type type) {
 			this.name = name;
 			this.type = type;

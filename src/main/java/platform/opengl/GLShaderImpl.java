@@ -3,6 +3,7 @@ package platform.opengl;
 import engine.ShaderImpl;
 import engine.Texture;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -57,6 +58,10 @@ public class GLShaderImpl implements ShaderImpl {
 
 	public void set(int location, float value) {
 		glUniform1f(location, value);
+	}
+
+	public void set(int location, Vector2f vector) {
+		glUniform2f(location, vector.x, vector.y);
 	}
 
 	public void set(int location, Vector3f vector) {

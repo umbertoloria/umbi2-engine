@@ -1,6 +1,7 @@
 package engine;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -15,6 +16,8 @@ public interface ShaderImpl {
 	void set(int location, int value);
 
 	void set(int location, float value);
+
+	void set(int location, Vector2f vector);
 
 	void set(int location, Vector3f vector);
 

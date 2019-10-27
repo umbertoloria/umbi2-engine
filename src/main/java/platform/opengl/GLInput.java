@@ -79,7 +79,10 @@ public class GLInput extends Input {
 		double[] x = {-1};
 		double[] y = {-1};
 		glfwGetCursorPos(window, x, y);
-		return new Vector2f((float) x[0], (float) y[0]);
+		int[] width = {-1};
+		int[] height = {-1};
+		glfwGetWindowSize(window, width, height);
+		return new Vector2f((float) (x[0] / width[0]), (float) (y[0] / height[0]));
 	}
 
 }

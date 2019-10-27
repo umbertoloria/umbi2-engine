@@ -26,6 +26,18 @@ public class XMLUtils {
 		return null;
 	}
 
+	public static Node[] getChilds(Node n) {
+		List<Node> nodes = new LinkedList<>();
+		NodeList childs = n.getChildNodes();
+		for (int i = 0; i < childs.getLength(); i++) {
+			Node child = childs.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				nodes.add(child);
+			}
+		}
+		return nodes.toArray(new Node[0]);
+	}
+
 	public static Node getFirstChildWithTagNameAndAttribNameWithValue(Node n, String tagName, String attribName,
 	                                                                  String attribValue) {
 		NodeList childs = n.getChildNodes();
@@ -38,6 +50,7 @@ public class XMLUtils {
 		return null;
 	}
 
+	// TODO: Restituire direttamente la LinkedList
 	public static Node[] getChildsWithTagName(Node n, String tagName) {
 		List<Node> nodes = new LinkedList<>();
 		NodeList childs = n.getChildNodes();
@@ -58,6 +71,10 @@ public class XMLUtils {
 		} catch (ParserConfigurationException | IOException | SAXException e) {
 			throw new IllegalStateException();
 		}
+	}
+
+	public static boolean hasAttribute(Node n, String attributeName) {
+		return n.getAttributes().getNamedItem(attributeName) != null;
 	}
 
 	public static String getValueOfAttribute(Node n, String attributeName) {

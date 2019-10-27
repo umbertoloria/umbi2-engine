@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+    <panel background="#00f">
+        <label>Layers</label>
+        <panel background="#0f0" cols="2">
+            <label>Layers list</label>
+            <select id="_layers">
+                <option>Ciao</option>
+                <option>a</option>
+                <option>tutti</option>
+            </select>
+        </panel>
+    </panel>
+    <panel background="#f91">
+        <label>Lighting</label>
+        <panel background="#f30" cols="2">
+            <label>Light effects</label>
+            <select>
+                <option>Lambertian</option>
+                <option>Half-lambert</option>
+                <option>Cel shading</option>
+            </select>
+        </panel>
+    </panel>
+</interface>
